@@ -6,6 +6,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#define DEBUG 0
+
 using namespace std;
 using ::testing::Return;
 
@@ -18,6 +20,9 @@ struct Inteiro {
 
 
 TEST(Inteiro, ValorDaCriacao) {
+	
+	if(DEBUG) cout<<"\n\n------ TESTE DE CRIACAO DE INTEIRO --------"<<endl;
+	
 	//Ordered_Queue<Inteiro> q1;
 	Inteiro i1(1,1), i2(-2,2), i3(9999,3);
 	
@@ -31,28 +36,91 @@ TEST(Inteiro, ValorDaCriacao) {
 	EXPECT_EQ(3, i3.e.rank()) 	<< "Elemento nao possui o mesmo rank da sua criacao";
 }
 
+/*
+ * Neste teste, faz-se a insersao de valores com rank aleatorios
+ * e espera-se que cada numero seja maior ou igual o anterior.
+ */ 
 TEST(Ordered_Queue, RetornoOrdenado) {
+	
+	if(DEBUG) cout<<"\n\n------ TESTE DE ORDENACAO --------"<<endl;
+		
 	Ordered_Queue<Inteiro> q1;
+	const int nvalues = 100;
+	
+	Inteiro * ivec [nvalues];
+	
+	int max = 100;
+	int min = 11;
+				
+	//Inserindo valores
+	if(DEBUG) cout<<"Inserindo: ";
+	for(int i=0;i<nvalues;i++){
+		int value = rand()%(max-min + 1) + min;
+		if(DEBUG) cout<<value<<" ";
+		ivec[i]= new Inteiro(value, value); 
+		q1.insert(&(ivec[i]->e));
+	}
+	
+	if(DEBUG) cout <<"\nRemovendo: ";
+	int head=0;
+	int last_head=q1.remove()->object()->i;	
+	if(DEBUG) cout <<last_head<<" ";
+	
+	for(int i=1;i<nvalues;i++){
+		head = q1.remove()->object()->i;
+		EXPECT_GE(head,  last_head);
+		if(DEBUG) cout <<last_head<<" ";
+		last_head=head;
+	}
+	
+	cout<<endl;
+	
 	Inteiro i1(7,7), i2(10,10), i3(5,5);
 	q1.insert(&i1.e);
 	q1.insert(&i2.e);
 	q1.insert(&i3.e);
 	
-	
-	int head;
-	for(int i=0;i<3;i++){
-		//head = q1.remove()->object()->i;
-		
-		//cout <<"Head: "<<head<<endl;
-	}
-	
 	EXPECT_EQ(5,  q1.remove()->object()->i);
 	EXPECT_EQ(7,  q1.remove()->object()->i);
 	EXPECT_EQ(10, q1.remove()->object()->i);
-	EXPECT_EQ(0,  q1.remove());
+		
+	//Liberando memoria	
+	for(int i=0;i<nvalues;i++){
+		delete ivec[i];
+	}
 	
-	
+	//EXPECT_EQ(0,  q1.remove());	
 }
+
+/*
+ * Neste teste, faz-se a insersao de valores com diferentes ranks.
+ * Apos sua remocao e veriricacao da ordem, verifica-se
+ * se a fila retorna nulo ao se tentar remover algum valor quando
+ * a mesma esta vazia.
+ */ 
+TEST(Ordered_Queue, RetornoVazia) {
+	
+	if(DEBUG) cout<<"\n\n------ TESTE DE RETORNO DE FILA VAZIA --------"<<endl;
+		
+	Ordered_Queue<Inteiro> q1;
+
+	//tentando remover antes de inserir
+	EXPECT_EQ(0,  q1.remove());	
+
+	Inteiro i1(1,7), i2(4,10), i3(10,5);
+	q1.insert(&i1.e);
+	q1.insert(&i2.e);
+	q1.insert(&i3.e);
+	
+	//verificando ordenacao dos valores inseridos
+	EXPECT_EQ(10,  q1.remove()->object()->i); //rank 5
+	EXPECT_EQ(1,  q1.remove()->object()->i);  //rank 7
+	EXPECT_EQ(4, q1.remove()->object()->i);   //rank 10
+		
+	//tentando remover apos a fila ter sido esvaziada
+	EXPECT_EQ(0,  q1.remove());	
+}
+
 
 int main( int argc, char *argv[] ) {
     ::testing::InitGoogleMock( &argc, argv );
