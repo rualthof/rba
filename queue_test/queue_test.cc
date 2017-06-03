@@ -35,6 +35,10 @@ TEST(Inteiro, CriacaoDeInteiro) {
 	EXPECT_EQ(3, i3.e.rank()) 	<< "Elemento nao possui o mesmo rank da sua criacao";
 }
 
+/* 
+ * Fixture utilizada para todos os testes, cria automaticamente uma fila
+ * ordenada, um vetor de dados, e tambem libera a memoria no final do teste
+ */ 
 class Ordered_Queue_Test : public ::testing::Test
 {
 	protected:
@@ -61,8 +65,7 @@ class Ordered_Queue_Test : public ::testing::Test
  * Neste teste, faz-se a insersao de valores com rank aleatorios
  * e espera-se que cada numero seja maior ou igual o anterior.
  */ 
-TEST_F(Ordered_Queue_Test, RetornoOrdenado) {
-	
+TEST_F(Ordered_Queue_Test, RetornoOrdenado) {	
 	if(DEBUG) cout<<"\n\n------ TESTE DE ORDENACAO --------"<<endl;
 	nvalues=10;		
 	int max = 100;
@@ -109,10 +112,14 @@ TEST_F(Ordered_Queue_Test, RetornoOrdenado) {
  * Neste teste, faz-se a insersao de valores com diferentes ranks.
  * Verifica-se se a fila retorna nulo ao se tentar remover algum valor quando
  * a mesma esta vazia.
+ * Tambem vefica-se o metodo empty()
  */ 
 TEST_F(Ordered_Queue_Test, RetornoVazia) {
 	
 	if(DEBUG) cout<<"\n\n------ TESTE DE RETORNO DE FILA VAZIA --------"<<endl;
+	
+	//verificando o metodo empty
+	EXPECT_EQ(1,  q1.empty());	
 		
 	//tentando remover antes de inserir
 	EXPECT_EQ(0,  q1.remove());	
@@ -122,12 +129,18 @@ TEST_F(Ordered_Queue_Test, RetornoVazia) {
 	q1.insert(&i2.e); 
 	q1.insert(&i3.e);
 	
+	//verificando o metodo empty
+	EXPECT_EQ(0,  q1.empty());
+	
 	q1.remove();  
 	q1.remove();  
 	q1.remove();
 		
 	//tentando remover apos a fila ter sido esvaziada
 	EXPECT_EQ(0,  q1.remove());	
+	
+	//verificando o metodo empty
+	EXPECT_EQ(1,  q1.empty());
 }
 
 /*
@@ -135,7 +148,7 @@ TEST_F(Ordered_Queue_Test, RetornoVazia) {
  * Testa-se se apos a remocao do elemento atraves da funcao search ele foi 
  * de fato removido da fila.
  */ 
-TEST_F(Ordered_Queue, RemocaoElemento) {
+TEST_F(Ordered_Queue_Test, RemocaoElemento) {
 	
 	if(DEBUG) cout<<"\n\n------ TESTE DE REMOCAO DE ELEMENTO --------"<<endl;
 		
@@ -151,10 +164,57 @@ TEST_F(Ordered_Queue, RemocaoElemento) {
 		ivec[i]= new Inteiro(value, i); 
 		q1.insert(&(ivec[i]->e));
 	}
+		
+	//Removendo dois valores
+	q1.remove(ivec[10]);
+	q1.remove(ivec[15]);
 	
+	//Testando com elemento que ja nao esta na fila
+	EXPECT_EQ(0,  q1.remove(ivec[15]));		
 	
-	
+	//Removendo valores da fila, que nao podem ser 
+	//iguais aos removidos anteriormente
+	while(!q1.empty()){
+		removido = q1.remove()->object();
+		EXPECT_NE(ivec[10], removido);
+		EXPECT_NE(ivec[15], removido);
+	}	
 }
+
+/*
+ * Neste teste faz-se a insersao de valores com ranks conhecidos, valores impares.
+ * Testa-se se o metodo search para verificar se todos os valores inseridos sao
+ * encontrados
+ */ 
+TEST_F(Ordered_Queue_Test, EncontraElemento) {
+	
+	if(DEBUG) cout<<"\n\n------ TESTE DE REMOCAO DE ELEMENTO --------"<<endl;
+		
+	nvalues = 100;	
+	int max = 100;
+	int min = 0;
+					
+	//Inserindo valores impares
+	if(DEBUG) cout<<"Inserindo ranks impares: ";
+	for(int i=0;i<nvalues;i++){
+		int value = rand()%(max-min + 1) + min;
+		ivec[i]= new Inteiro(value, i); 
+		//Apenas insere se for impar
+		if(i%1==0){
+			if(DEBUG) cout<<endl<<"("<<value<<","<<i<<") ";			
+			q1.insert(&(ivec[i]->e));
+		}
+	}
+	
+	//Testando o metodo search
+	for(int i=0;i<nvalues;i++){
+		if(i%1==0) //Se or impar, deve estar
+			EXPECT_EQ(ivec[i], q1.search(ivec[i])->object());
+		else //Se for par, nao esta na fila
+			EXPECT_EQ(NULL, q1.search(ivec[i])->object());		
+	}
+}
+
 
 
 int main( int argc, char *argv[] ) {
