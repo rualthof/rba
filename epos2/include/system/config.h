@@ -11,7 +11,7 @@
 #define ARCH armv7
 #define MACH cortex
 #define MMOD emote3
-#define APPL example_spi
+#define APPL led_blink
 #define __mode_library__
 #define __arch_armv7__
 #define __mach_cortex__
