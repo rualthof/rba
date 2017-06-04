@@ -1,16 +1,15 @@
 #ifndef cpu_h
 #define cpu_h
-
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-
 class CPU{
  public:
 	static void int_disable(void);
 	static void int_enable(void);  
 };
+#endif
 
 /*
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 class CPU: public Foo {
  public:
   MOCK_METHOD0(int_disable, void(void));
@@ -18,4 +17,4 @@ class CPU: public Foo {
 };
 */
 
-#endif
+
