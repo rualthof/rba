@@ -6,7 +6,7 @@
 #=========================================================================
 # PATHS
 #=========================================================================
-EPOS=/home/rudimar/Desktop/rba/epos2
+EPOS=/home/rudimar/Desktop/testabilidade/rba/epos2
 TMP=/tmp
 INC=$EPOS/include
 SRC=$EPOS/src
