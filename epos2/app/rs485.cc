@@ -21,78 +21,119 @@ class SerialRS485 : public UART {
 	public:
 	
 		//------ Pinos de acesso ao chip -------
-		GPIO * RO; //PC3 - RS485 RO - Receptor Output
-		GPIO * DI; //PC4 - RS485 DI - Driver Input
 		GPIO * nRE;//PC5 - RS485 RE - Receiving Enable
 		GPIO * DE; //PC6 - RS485 DE - Driver Enable
 		
-		int _unit;
+		int uartNumber;
 		
+		//Mock da UART para simular put, get.
+			
 		SerialRS485(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
 		: UART(unit, baud_rate, data_bits, parity, stop_bits)
 		{	
-			
-			_unit = unit;
+			uartNumber = unit;
 			nRE = new GPIO('C',5, GPIO::OUT);
 			DE = new  GPIO('C',6, GPIO::OUT);	
 		}
 		
-		//DI ja esta conectado em TX da UART		
-		void writeWord(int i){
+		//DI ja esta conectado em TX da UART
+		
+		//Se char der overflow??		
+		void writeWord(char i){
 			sendingState();
-			cout<<"Uart "<<_unit<<" enviando "<<i<<endl;
-			//put(i);
+			put(i);
 		}		
 		
 		//RO ja esta conectado no RX da UART
 		int readWord(){	
 			receivingState();		
 			int i = get();
-			cout<<"Uart "<<_unit<<" recebendo "<<i<<endl;
 			return i;
 		}
+		
+		
+		//Se msg for null?
+		//Se tamanho de msg for 0? 
+		//Testar
+		
+		void sendMessage(char msg []){
+			int j = strlen(msg);
+			cout<<endl<<"Escrevendo: "<<j<<" ";
+			writeWord(j);
+			for(int i=0;i<j;i++){
+				writeWord(msg[i]); 
+				cout<<msg[i]; 
+			} 
+		} 
 	
-	private:
+		//Se msg for null?
+		//Se tamanho de msg for 0? 
+		//Testar
+		int readMessage(char msg []){
+			cout<<endl<<"Tamanho da proxima mensagem: ";
+			int j = readWord();  
+			cout<<j<<endl;
+       
+			cout<<"Recebendo mensagem:";			
+			for(int i=0;i<j;i++){
+				msg[i]=readWord(); 
+				cout<< char(msg[i]);
+			}       
+			
+			return j;       
+		} 
+	
+	//private:
 	
 		void sendingState(){
+			//cout<<"Sending: DE = 1"<<endl;
 			DE->set(1);
 		}
 		
 		void shutdownState(){
+			//cout<<"Shutdown: DE = 0, nRE=1"<<endl;
 			DE->set(0);
 			nRE->set(1);		
 		}
 		
 		void receivingState(){
+			//cout<<"Receiving: DE = 0, nRE=0"<<endl;
 			DE->set(0);
 			nRE->set(0);		
 		}	
-			
+		
+		
 };
+
+void sleep(int n){
+	for(int i=0;i<n;i++){
+		for(volatile int t=0;t<0xfffff;t++);
+	}
+}
+
+
 
 
 int main()
 {
-	cout << "Iniciando programa\n";
-	SerialRS485 s(0, 9600, 8, UART_Common::NONE, 1);
-	//SerialRS485 r(1, 9600, 8, UART_Common::NONE, 1);
-	//SerialRS485 t(2, 9600, 8, UART_Common::NONE, 1);
-	cout << "Entrando no loop\n";
-    for(bool b=false;;b=(b+1)%2)
+	sleep(3);
+	cout << "Iniciando RS485\n";
+	SerialRS485 r(1, 9600, 8, UART_Common::NONE, 1);
+	sleep(3);
+    char msg []={"Tenis top demais"}; //Para receber a mensagem
+    unsigned char j=10; 
+    sleep(3);
+    cout << "Entrando no loop\n";
+    while(1)
     {
-        
-        s.writeWord(0b101010101);  
-        
-     
-        //s.readWord();
-       
-        for(volatile int t=0;t<0xfffff;t++);
-
-        s.writeWord(0);  
-        for(volatile int t=0;t<0xfffff;t++);
-        
-
+		r.sendMessage(msg); 
+		sleep(1);	
+		j = r.readMessage(msg);	 
+		sleep(1);  
     }
+    
+        
+    
     return 0;
 }
 
