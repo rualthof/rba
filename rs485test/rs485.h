@@ -1,11 +1,5 @@
-#include <gpio.h>
-#include <alarm.h>
-#include <utility/ostream.h>
-#include <uart.h>
-
-using namespace EPOS;
-OStream cout;
-
+#ifndef RS485_H
+#define RS485_H
 
 /* 
  * Esta classe deriva de UART pois
@@ -16,24 +10,35 @@ OStream cout;
  * basta extender a classe
  */ 
  
-class SerialRS485 : public UART {
+ 
+template <class GPIOClass, class UARTClass>
+class SerialRS485 : public UARTClass {
 		
 	public:
 	
-		//------ Pinos de acesso ao chip -------
-		GPIO * nRE;//PC5 - RS485 RE - Receiving Enable
-		GPIO * DE; //PC6 - RS485 DE - Driver Enable
+		//PC5 - RS485 RE - Receiving Enable
+		GPIO * nRE;
+		//PC6 - RS485 DE - Driver Enable
+		GPIO * DE; 
 		
-		int uartNumber;
+		GPIOClass * gpioCreator;
 		
 		//Mock da UART para simular put, get.
-			
-		SerialRS485(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
-		: UART(unit, baud_rate, data_bits, parity, stop_bits)
+		
+		
+		SerialRS485(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
+		: UARTClass(1, baud_rate, data_bits, parity, stop_bits)
 		{		
-			uartNumber = unit;
-			nRE = new GPIO('C',5, GPIO::OUT);
-			DE = new  GPIO('C',6, GPIO::OUT);	
+			gpioCreator = new GPIOClass();
+			nRE = gpioCreator->newGPIO('C',5, GPIOClass::OUT);
+			DE  = gpioCreator->newGPIO('C',6, GPIOClass::OUT);
+			shutdownState();	
+		}
+		
+		~SerialRS485(){
+			delete nRE;
+			delete DE;
+			delete gpioCreator;
 		}
 		
 		//DI ja esta conectado em TX da UART
@@ -41,13 +46,13 @@ class SerialRS485 : public UART {
 		//Se char der overflow??		
 		void writeWord(char i){
 			sendingState();
-			put(i);
+			this->put(i);
 		}		
 		
 		//RO ja esta conectado no RX da UART
 		int readWord(){	
 			receivingState();		
-			int i = get();
+			int i = this->get();
 			return i;
 		}
 		
@@ -56,20 +61,21 @@ class SerialRS485 : public UART {
 		//Se tamanho de msg for 0? 
 		//Testar
 		
-		void sendMessage(char msg [], uint tam){
+		void sendMessage(char msg [], unsigned int tam){
 			//int j = strlen(msg);
 			//cout<<endl<<"Escrevendo: "<<j<<" ";
 			//writeWord(j);
+			sendingState();
 			for(int i=0;i<tam;i++){
 				writeWord(msg[i]); 
-				cout<<msg[i]; 
+				//cout<<msg[i]; 
 			} 
 		} 
 	
 		//Se msg for null?
 		//Se tamanho de msg for 0? 
 		//Testar
-		int readMessage(char msg [], uint tam){
+		int readMessage(char msg [], unsigned int tam){
 			//cout<<endl<<"Tamanho da proxima mensagem: ";
 			//int j = readWord();  
 			//cout<<j<<endl;
@@ -80,10 +86,14 @@ class SerialRS485 : public UART {
 				cout<< char(msg[i]);
 			}       
 			
-			return j;       
+			return tam;       
 		} 
 	
 	//private:
+	
+		GPIOClass * newGPIO(char port, int pin, unsigned int inout){
+			return new GPIOClass(port, pin, inout);
+		}
 	
 		void sendingState(){
 			//cout<<"Sending: DE = 1"<<endl;
@@ -101,39 +111,6 @@ class SerialRS485 : public UART {
 			DE->set(0);
 			nRE->set(0);		
 		}	
-		
-		
 };
 
-void sleep(int n){
-	for(int i=0;i<n;i++){
-		for(volatile int t=0;t<0xfffff;t++);
-	}
-}
-
-
-
-
-int main()
-{
-	sleep(3);
-	cout << "Iniciando RS485\n";
-	SerialRS485 r(1, 9600, 8, UART_Common::NONE, 1);
-	sleep(3);
-    char msg []={"Tenis top demais"}; //Para receber a mensagem
-    unsigned char j=10; 
-    sleep(3);
-    cout << "Entrando no loop\n";
-    while(1)
-    {
-		r.sendMessage(msg); 
-		sleep(1);	
-		j = r.readMessage(msg);	 
-		sleep(1);  
-    }
-    
-        
-    
-    return 0;
-}
-
+#endif

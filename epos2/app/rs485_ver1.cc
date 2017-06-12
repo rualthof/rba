@@ -30,7 +30,7 @@ class SerialRS485 : public UART {
 			
 		SerialRS485(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
 		: UART(unit, baud_rate, data_bits, parity, stop_bits)
-		{		
+		{	
 			uartNumber = unit;
 			nRE = new GPIO('C',5, GPIO::OUT);
 			DE = new  GPIO('C',6, GPIO::OUT);	
@@ -56,11 +56,11 @@ class SerialRS485 : public UART {
 		//Se tamanho de msg for 0? 
 		//Testar
 		
-		void sendMessage(char msg [], uint tam){
-			//int j = strlen(msg);
-			//cout<<endl<<"Escrevendo: "<<j<<" ";
-			//writeWord(j);
-			for(int i=0;i<tam;i++){
+		void sendMessage(char msg []){
+			int j = strlen(msg);
+			cout<<endl<<"Escrevendo: "<<j<<" ";
+			writeWord(j);
+			for(int i=0;i<j;i++){
 				writeWord(msg[i]); 
 				cout<<msg[i]; 
 			} 
@@ -69,13 +69,13 @@ class SerialRS485 : public UART {
 		//Se msg for null?
 		//Se tamanho de msg for 0? 
 		//Testar
-		int readMessage(char msg [], uint tam){
-			//cout<<endl<<"Tamanho da proxima mensagem: ";
-			//int j = readWord();  
-			//cout<<j<<endl;
+		int readMessage(char msg []){
+			cout<<endl<<"Tamanho da proxima mensagem: ";
+			int j = readWord();  
+			cout<<j<<endl;
        
 			cout<<"Recebendo mensagem:";			
-			for(int i=0;i<tam;i++){
+			for(int i=0;i<j;i++){
 				msg[i]=readWord(); 
 				cout<< char(msg[i]);
 			}       
