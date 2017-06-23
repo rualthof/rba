@@ -21,21 +21,46 @@ using namespace std;
 #include "rs485.h"
 
 
-void sleep(int n){
-	for(int i=0;i<n;i++){
-		for(volatile int t=0;t<0xfffff;t++);
-	}
-}
-
-
-TEST(SerialTest, testWriteWord){	
-		
-	SerialRS485 <MockGPIOTestWriteWord, MockUART> r(9600, 8, UART_Common::NONE, 1);	
+TEST(SerialRS485Test, testWriteWord){	
 	
-	char msg []={"Mensagem de teste\0"}; 
-    int tam = strlen(msg);
-   	r.writeWord(2);    	
+	const int nWrites=100;
+	const int nReads=0;	
+	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
+
+    for(int i=0;i<nWrites;i++)
+		r.writeWord(i);    	
 }
+
+/*
+ * Testa a leitura de uma sequencia de caracteres
+ * bem definido. Verificando o valor recebido a cada
+ * chamada do metodo readWord()
+ */
+
+TEST(SerialRS485Test, testReadWord){		
+	const int nWrites=0;
+	const int nReads=100;	
+	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
+
+	int leitura;
+    for(int i=0;i<nReads;i++){
+		leitura = r.readWord();
+		EXPECT_EQ(i, leitura);
+		//cout<<leitura<<" ";
+	}
+	cout<<endl;
+}
+
+TEST(SerialRS485Test, testWriteWordOverfolow){	
+	
+	const int nWrites=10;
+	const int nReads=0;	
+	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
+
+    for(int i=80000;i<80000+nWrites;i++)
+		r.writeWord(i);    	
+}
+
 
 
 int main( int argc, char *argv[] ) {

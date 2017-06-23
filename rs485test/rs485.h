@@ -12,7 +12,7 @@
  
  
 template <class GPIOClass, class UARTClass>
-class SerialRS485 : public UARTClass {
+class SerialRS485 {
 		
 	public:
 	
@@ -21,46 +21,50 @@ class SerialRS485 : public UARTClass {
 		//PC6 - RS485 DE - Driver Enable
 		GPIO * DE; 
 		
+		UART * uart;
+		
 		GPIOClass * gpioCreator;
-		
-		//Mock da UART para simular put, get.
-		
-		
+		UARTClass * uartCreator;
+				
 		SerialRS485(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
-		: UARTClass(1, baud_rate, data_bits, parity, stop_bits)
 		{		
 			gpioCreator = new GPIOClass();
-			nRE = gpioCreator->newGPIO('C',5, GPIOClass::OUT);
-			DE  = gpioCreator->newGPIO('C',6, GPIOClass::OUT);
+			uartCreator = new UARTClass();
+			
+			nRE 	= gpioCreator->newGPIO('C',5, GPIOClass::OUT);
+			DE  	= gpioCreator->newGPIO('C',6, GPIOClass::OUT);
+			uart 	= uartCreator->newUART(1, baud_rate, data_bits, parity, stop_bits);
 			shutdownState();	
 		}
 		
 		~SerialRS485(){
+			shutdownState();
 			delete nRE;
 			delete DE;
+			delete uart;
 			delete gpioCreator;
+			delete uartCreator;
 		}
 		
 		//DI ja esta conectado em TX da UART
 		
 		//Se char der overflow??		
-		void writeWord(char i){
+		void writeWord(char i){			
 			sendingState();
-			this->put(i);
+			uart->put(i);
 		}		
 		
 		//RO ja esta conectado no RX da UART
 		int readWord(){	
 			receivingState();		
-			int i = this->get();
+			int i = uart->get();
 			return i;
 		}
 		
 		
-		//Se msg for null?
+		/*/Se msg for null?
 		//Se tamanho de msg for 0? 
-		//Testar
-		
+		//Testar		
 		void sendMessage(char msg [], unsigned int tam){
 			//int j = strlen(msg);
 			//cout<<endl<<"Escrevendo: "<<j<<" ";
@@ -83,12 +87,12 @@ class SerialRS485 : public UARTClass {
 			cout<<"Recebendo mensagem:";			
 			for(int i=0;i<tam;i++){
 				msg[i]=readWord(); 
-				cout<< char(msg[i]);
+				//cout<< char(msg[i]);
 			}       
 			
 			return tam;       
 		} 
-	
+	*/
 	//private:
 	
 		GPIOClass * newGPIO(char port, int pin, unsigned int inout){

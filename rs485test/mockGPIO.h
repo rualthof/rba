@@ -1,91 +1,80 @@
 #ifndef MOCKGPIO_H
 #define MOCKGPIO_H
 
+/*
+ * Mock da classe GPIO para simular os 
+ * metodos set, get e construtor.
+ */ 
 class GPIO {
  public:
-  GPIO(char port, int pin, int inout) {
-	  
-  }
+	
+  int counter;
   
-  GPIO() {
-	  
-  }
+  GPIO() {}
+  GPIO(char port, int pin, int inout) {}  
   
   MOCK_CONST_METHOD1(set, 		void(bool bit));
   MOCK_CONST_METHOD0(get, 		int());
-  
-  enum {
-        OUT = 0,
-        IN = 1
-    };
+ 
 };
 
-
-class MockGPIOTestWriteWord {	
+/*
+ * Passa como parametro template os valores 'nWrites' e 'nReads'
+ * e com base nestes parametros cria as expectativas para cada
+ * chamada dos metodos da GPIO
+ */ 
+template <int nWrites=0, int nReads=0>
+class MockGPIOCreator {	
 	public:
-		
-		int counter;
+	
+		enum { OUT = 0, IN = 1 };
 		
 		GPIO * nRE;
 		GPIO * DE;
 	
-		MockGPIOTestWriteWord() {
+		MockGPIOCreator() {
 			
-			A = new GPIO();
-			B = new GPIO();
+			nRE = new GPIO();
+			DE = new GPIO();
 			
-			EXPECT_CALL(*this, get())
-				.WillRepeatedly(Return(1));
-		   
-		   
-			EXPECT_CALL(*nRE, set(_))
-				.Times(1);
+		    /*
+		     * construtor -> shutdown state 
+		     * destructor -> shutdown state 
+		     */ 
+			EXPECT_CALL(*nRE, set(1))
+				.Times(1+1);
 			
-			//construtor -> shutdown state 
-		    //writeWord 	-> 1x
-			EXPECT_CALL(*DE, set(_))
-				.Times(2);
+			/*
+			 * readWord 	-> nReads vezes
+			 */ 
+			EXPECT_CALL(*nRE, set(0))
+				.Times(nReads);
 			
+			/*
+			 * constructor 	-> shutdown state
+			 * receiving 	-> nReads vezes
+			 * destructor	-> shutdown state
+			 */
+			EXPECT_CALL(*DE, set(0))
+				.Times(nReads+1+1);
+			
+			/* 
+			 * writeWord  -> nWrites vezes	
+			 */
+			EXPECT_CALL(*DE, set(1))
+				.Times(nWrites);
+			
+			/*
+			 * Espera apenas duas chamadas e retorna 
+			 * os enderecos de nRE e DE, nesta ordem.
+			 */
 			EXPECT_CALL(*this, newGPIO(_,_,_))
 				.Times(2)
 				.WillOnce(ReturnPointee(&nRE))
-				.WillOnce(ReturnPointee(&DE));
-			
-		   			
-		   //Uma vez em shutdown state
-		   //EXPECT_CALL(*this, set(0))
-			//	.Times(1);
-		  }
+				.WillOnce(ReturnPointee(&DE));			
+			}
 		  
-		MOCK_METHOD1(set, 		void(bool bit));
-		MOCK_METHOD0(get, 		int());
 		MOCK_CONST_METHOD3(newGPIO, 	GPIO * (char A, int B, int C));
-		
-		enum {
-			OUT = 0,
-			IN = 1
-		};
-}; 
-
-
-
-
-class MockGPIOTestSend {	
-	public:
-		MockGPIOTestSend(char port, int pin, int inout) {
-		   EXPECT_CALL(*this, get())
-				.WillRepeatedly(Return(1));
-		   EXPECT_CALL(*this, set(_))
-				.Times(AnyNumber());
-		  }
-		  
-		MOCK_CONST_METHOD1(set, 		void(bool bit));
-		MOCK_CONST_METHOD0(get, 		int());
-		
-		enum {
-			OUT = 0,
-			IN = 1
-		};
 }; 
 
 #endif
