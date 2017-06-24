@@ -1,6 +1,46 @@
 #ifndef MOCKGPIO_H
 #define MOCKGPIO_H
 
+using ::testing::Return;
+using ::testing::ReturnRef;
+using ::testing::ReturnPointee;
+using ::testing::AnyNumber;
+using ::testing::_;
+using ::testing::Invoke;
+using ::testing::InvokeWithoutArgs;
+using namespace std;	
+
+class GPIO_Common
+{
+protected:
+    GPIO_Common() {}
+
+public:
+    enum Level {
+        HIGH,
+        LOW
+    };
+
+    enum Edge {
+        RISING,
+        FALLING,
+        BOTH
+    };
+
+    enum Direction {
+        IN,
+        OUT,
+        INOUT
+    };
+
+    enum Pull {
+        UP,
+        DOWN,
+        FLOATING
+    };
+};
+
+
 /*
  * Mock da classe GPIO para simular os 
  * metodos set, get e construtor.

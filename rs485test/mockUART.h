@@ -1,6 +1,14 @@
 #ifndef MOCKUART_H
 #define MOCKUART_H
 
+using ::testing::Return;
+using ::testing::ReturnRef;
+using ::testing::ReturnPointee;
+using ::testing::AnyNumber;
+using ::testing::_;
+using ::testing::Invoke;
+using ::testing::InvokeWithoutArgs;
+using namespace std;
 
 class UART_Common
 {

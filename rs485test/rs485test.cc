@@ -3,21 +3,8 @@
 
 //#include <utility/ostream.h>
 #include <iostream>
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-
-using ::testing::Return;
-using ::testing::ReturnRef;
-using ::testing::ReturnPointee;
-using ::testing::AnyNumber;
-using ::testing::_;
-using ::testing::Invoke;
-using ::testing::InvokeWithoutArgs;
-using namespace std;
 
 
-#include "mockGPIO.h"
-#include "mockUART.h"
 #include "rs485.h"
 
 
@@ -62,10 +49,13 @@ TEST(SerialRS485Test, testWriteWordOverfolow){
 }
 
 
-
 int main( int argc, char *argv[] ) {
-    ::testing::InitGoogleMock( &argc, argv );
-    return RUN_ALL_TESTS( );
+    //::testing::InitGoogleMock( &argc, argv );
+    //return RUN_ALL_TESTS( );
+    
+    SerialRS485<GPIOCreator, UARTCreator> r(9600, 8, UART_Common::NONE, 1);	
+    for(int i=0;i<100;i++)
+		r.writeWord(i); 
 }
 
 
