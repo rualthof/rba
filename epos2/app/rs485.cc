@@ -23,10 +23,6 @@ class SerialRS485 : public UART {
 		//------ Pinos de acesso ao chip -------
 		GPIO * nRE;//PC5 - RS485 RE - Receiving Enable
 		GPIO * DE; //PC6 - RS485 DE - Driver Enable
-		
-		int uartNumber;
-		
-		//Mock da UART para simular put, get.
 			
 		SerialRS485(unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
 		: UART(unit, baud_rate, data_bits, parity, stop_bits)

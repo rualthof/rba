@@ -66,11 +66,11 @@ class GPIO {
 template <int nWrites=0, int nReads=0>
 class MockGPIOCreator {	
 	public:
-	
-		enum { OUT = 0, IN = 1 };
 		
 		GPIO * nRE;
 		GPIO * DE;
+		
+		enum { OUT = 0, IN = 1 };
 	
 		MockGPIOCreator() {
 			

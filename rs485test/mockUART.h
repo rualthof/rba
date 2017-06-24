@@ -44,15 +44,20 @@ class UART {
  */ 
 template <int nWrites=0, int nReads=0>
 class MockUARTCreator {
- public:
  
-	enum {OUT = 0, IN = 1}; 
+ public:
+	
 	UART * uart1;
 	
+	enum {OUT = 0, IN = 1}; 
  
 	MockUARTCreator(){
 		
 		uart1 = new UART();
+		 
+		EXPECT_CALL(*this, newUART(_,_,_,_,_))
+				.Times(1)
+				.WillOnce(ReturnPointee(&uart1));
 		
 		EXPECT_CALL(*uart1, put(_))	
 			.Times(nWrites);
@@ -68,12 +73,8 @@ class MockUARTCreator {
 			EXPECT_CALL(*uart1, get())
 				.WillOnce(Return(--i))
 				.RetiresOnSaturation();
-		}
+		}			
 		
-		 
-		EXPECT_CALL(*this, newUART(_,_,_,_,_))
-				.Times(1)
-				.WillOnce(ReturnPointee(&uart1));
 	}
  
 	MOCK_CONST_METHOD5(newUART, UART * (unsigned int unit, unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits));
