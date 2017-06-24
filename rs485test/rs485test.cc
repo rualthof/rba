@@ -3,8 +3,7 @@
 
 //#include <utility/ostream.h>
 #include <iostream>
-
-
+#define RS_485_TEST
 #include "rs485.h"
 
 

@@ -10,15 +10,13 @@
 
 using namespace std;
 
-struct Inteiro {
-    
+struct Inteiro {    
     //Construtor
-    Inteiro(int valor, int rank) : 
-	e(this, rank), //e._object = this; e.rank = _r;
-	i(valor) 		
+    //e._object = this; e.rank = _r;
+    Inteiro(int valor, int rank) : 	e(this, rank), i(valor) 		
 	{} 
 	
-    int i;
+    int i; //valor do elemento
     Ordered_Queue<Inteiro>::Element e;
 };
 

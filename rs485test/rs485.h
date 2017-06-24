@@ -1,21 +1,21 @@
 #ifndef RS485_H
 #define RS485_H
 
-#include <machine.h>
-#include <gpio.h>
-#include <alarm.h>
-#include <utility/ostream.h>
-#include <uart.h>
 
-using namespace EPOS;
-OStream cout;
+#ifdef RS_485_TEST
+	#include "gtest/gtest.h"
+	#include "gmock/gmock.h"
+	#include "mockGPIO.h"
+	#include "mockUART.h"
+#else 
+	#include <gpio.h>
+	#include <alarm.h>
+	#include <utility/ostream.h>
+	#include <uart.h>
+	using namespace EPOS;
+	OStream cout;	
+#endif
 
-/*
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-#include "mockGPIO.h"
-#include "mockUART.h"
-*/
 
 /* Classe utilizada para a criacao de 
  * objetos GPIO, passada como parametro template
