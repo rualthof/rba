@@ -94,9 +94,9 @@ class SerialRS485 {
 		}		
 		
 		//RO ja esta conectado no RX da UART
-		int readWord(){	
+		char readWord(){	
 			receivingState();		
-			int i = uart->get();
+			char i = uart->get();
 			return i;
 		}
 		
