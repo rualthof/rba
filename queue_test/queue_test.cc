@@ -302,6 +302,25 @@ TEST_F(Ordered_Queue_Test, SizeTest) {
 	EXPECT_FALSE(q1.size());
 }
 
+TEST_F(Ordered_Queue_Test, InsersaoElementoNulo) {
+	if(DEBUG) cout<<"\n\n------ TESTE DE INSERSAO DE ELEMENTO NULO --------"<<endl;
+	q1.insert(NULL);	
+	
+	EXPECT_EQ(0, q1.size());
+	EXPECT_EQ(1, q1.empty());
+	EXPECT_FALSE(q1.tail());
+	EXPECT_FALSE(q1.head());
+	
+	Inteiro i1(1,7);
+	q1.insert(&i1.e);
+	
+	q1.insert(NULL);	
+	
+	EXPECT_EQ(1, q1.size());
+	EXPECT_EQ(q1.head(), q1.tail());	
+}
+
+
 int main( int argc, char *argv[] ) {
     ::testing::InitGoogleMock( &argc, argv );
     return RUN_ALL_TESTS( );

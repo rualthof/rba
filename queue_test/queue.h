@@ -57,7 +57,8 @@ public:
     Element * head() { return T::head(); }
     Element * tail() { return T::tail(); }
 
-    void insert(Element * e) { T::insert(e); }
+    //void insert(Element * e) { T::insert(e); }
+    void insert(Element * e) { if(e==NULL) return; T::insert(e); }
 
     Element * remove() { return T::remove(); }
     Element * remove(Element * e) { return T::remove(e); }
@@ -111,6 +112,10 @@ public:
     }
 
     void insert(Element * e) {
+		if(e==NULL){
+			return;
+		}
+			
         enter();
         T::insert(e);
         leave();
