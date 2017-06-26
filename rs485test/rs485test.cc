@@ -43,7 +43,7 @@ TEST(SerialRS485Test, testReadWord){
 }
 
 TEST(SerialRS485Test, testWriteWordOverfolow){	
-	
+	 
 	const int nWrites=10;
 	const int nReads=0;	
 	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
