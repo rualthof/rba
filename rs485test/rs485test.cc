@@ -7,15 +7,15 @@
 #include "rs485.h"
 
 
-TEST(SerialRS485Test, testWriteWord){	
-	
-	const int nWrites=100;
-	const int nReads=0;	
-	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
+	TEST(SerialRS485Test, testWriteWord){	
+		
+		const int nWrites=100;
+		const int nReads=0;	
+		SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
 
-    for(int i=0;i<nWrites;i++)
-		r.writeWord(i);    	
-}
+		for(int i=0;i<nWrites;i++)
+			r.writeWord(i);    	
+	}
 
 /*
  * Testa a leitura de uma sequencia de caracteres
@@ -42,16 +42,17 @@ TEST(SerialRS485Test, testReadWord){
 	
 }
 
-TEST(SerialRS485Test, testWriteWordOverfolow){	
+/*
+TEST(SerialRS485Test, testFailExample){	
 	 
-	const int nWrites=10;
-	const int nReads=0;	
+	const int nWrites=2;
+	const int nReads=1;	
 	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
 
-    for(int i=80000;i<80000+nWrites;i++)
-		r.writeWord(i);    	
+    r.writeWord('1');    	
+    r.writeWord('2');    	
 }
-
+*/
 
 int main( int argc, char *argv[] ) {
     ::testing::InitGoogleMock( &argc, argv );

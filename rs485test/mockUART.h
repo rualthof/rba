@@ -2,12 +2,8 @@
 #define MOCKUART_H
 
 using ::testing::Return;
-using ::testing::ReturnRef;
 using ::testing::ReturnPointee;
-using ::testing::AnyNumber;
 using ::testing::_;
-using ::testing::Invoke;
-using ::testing::InvokeWithoutArgs;
 using namespace std;
 
 class UART_Common
@@ -48,8 +44,6 @@ class MockUARTCreator {
  public:
 	
 	UART * uart1;
-	
-	enum {OUT = 0, IN = 1}; 
  
 	MockUARTCreator(){
 		

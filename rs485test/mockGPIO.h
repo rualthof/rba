@@ -2,12 +2,8 @@
 #define MOCKGPIO_H
 
 using ::testing::Return;
-using ::testing::ReturnRef;
 using ::testing::ReturnPointee;
-using ::testing::AnyNumber;
 using ::testing::_;
-using ::testing::Invoke;
-using ::testing::InvokeWithoutArgs;
 using namespace std;	
 
 class GPIO_Common
@@ -69,8 +65,6 @@ class MockGPIOCreator {
 		
 		GPIO * nRE;
 		GPIO * DE;
-		
-		enum { OUT = 0, IN = 1 };
 	
 		MockGPIOCreator() {
 			
@@ -85,10 +79,7 @@ class MockGPIOCreator {
 			EXPECT_CALL(*this, newGPIO(_,_,_))
 				.Times(2)
 				.WillOnce(ReturnPointee(&nRE))
-				.WillOnce(ReturnPointee(&DE));			
-			}
-			
-			
+				.WillOnce(ReturnPointee(&DE));						
 			
 		    /*
 		     * construtor -> shutdown state 
@@ -117,7 +108,7 @@ class MockGPIOCreator {
 			EXPECT_CALL(*DE, set(1))
 				.Times(nWrites);
 			
-			
+		}
 		  
 		MOCK_CONST_METHOD3(newGPIO, 	GPIO * (char A, int B, int C));
 }; 
