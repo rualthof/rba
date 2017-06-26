@@ -7,7 +7,8 @@ OStream cout;
 
 int main(){
     
-    while(1){
+    int a = 10;
+    while(a--){
       for(int i = 0; i < 100000000; i++);
     
         cout << "Hello World" << endl;  

@@ -1,21 +1,21 @@
 #ifndef RS485_H
 #define RS485_H
 
-#include <machine.h>
-#include <gpio.h>
-#include <alarm.h>
-#include <utility/ostream.h>
-#include <uart.h>
 
-using namespace EPOS;
-OStream cout;
+#ifdef RS_485_TEST
+	#include "gtest/gtest.h"
+	#include "gmock/gmock.h"
+	#include "mockGPIO.h"
+	#include "mockUART.h"
+#else 
+	#include <gpio.h>
+	#include <alarm.h>
+	#include <utility/ostream.h>
+	#include <uart.h>
+	using namespace EPOS;
+	OStream cout;	
+#endif
 
-/*
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-#include "mockGPIO.h"
-#include "mockUART.h"
-*/
 
 /* Classe utilizada para a criacao de 
  * objetos GPIO, passada como parametro template
@@ -88,51 +88,20 @@ class SerialRS485 {
 		//DI ja esta conectado em TX da UART
 		
 		//Se char der overflow??		
-		void writeWord(char i){			
+		void writeWord(char i){	
 			sendingState();
 			uart->put(i);
 		}		
 		
 		//RO ja esta conectado no RX da UART
-		int readWord(){	
+		char readWord(){	
 			receivingState();		
-			int i = uart->get();
+			char i = uart->get();
 			return i;
 		}
 		
 		
-		/*/Se msg for null?
-		//Se tamanho de msg for 0? 
-		//Testar		
-		void sendMessage(char msg [], unsigned int tam){
-			//int j = strlen(msg);
-			//cout<<endl<<"Escrevendo: "<<j<<" ";
-			//writeWord(j);
-			sendingState();
-			for(int i=0;i<tam;i++){
-				writeWord(msg[i]); 
-				//cout<<msg[i]; 
-			} 
-		} 
-	
-		//Se msg for null?
-		//Se tamanho de msg for 0? 
-		//Testar
-		int readMessage(char msg [], unsigned int tam){
-			//cout<<endl<<"Tamanho da proxima mensagem: ";
-			//int j = readWord();  
-			//cout<<j<<endl;
-       
-			cout<<"Recebendo mensagem:";			
-			for(int i=0;i<tam;i++){
-				msg[i]=readWord(); 
-				//cout<< char(msg[i]);
-			}       
-			
-			return tam;       
-		} 
-	*/
-	//private:
+	private:
 		
 		void sendingState(){
 			//cout<<"Sending: DE = 1"<<endl;

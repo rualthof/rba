@@ -6,8 +6,7 @@ using namespace EPOS;
 
 OStream cout;
 
-void delay(int max){
-	
+void delay(int max){	
 	for(volatile int t=0;t<max;t++);
 }
 
