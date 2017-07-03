@@ -61,13 +61,16 @@ class MockUARTCreator {
 		 * desta forma permite que se definam 0 leituras
 		 * para testes que usam apenas escrita.
 		 * A ultima expectativa criada eh a primeira atendida,
-		 * desta forma, a orderm de retorno sera: 0, 1, 2, ... nReads-1.
+		 * desta forma, a orderm de retorno sera: -3,-2,-1, ... nReads-1.
 		 */ 
-		for (int i = nReads; i > 0 ; ) {
-			EXPECT_CALL(*uart1, get())
-				.WillOnce(Return(--i))
-				.RetiresOnSaturation();
-		}			
+		if(nReads){
+			char limits_array []= {-3,-2,-1,0,1,2,3,126,127,128,129,130};
+			for (int i = sizeof(limits_array); i > 0 ; ) {
+				EXPECT_CALL(*uart1, get())
+					.WillOnce(Return(limits_array[--i]))
+					.RetiresOnSaturation();
+			}	
+		}		
 		
 	}
  

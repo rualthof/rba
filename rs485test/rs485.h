@@ -85,18 +85,22 @@ class SerialRS485 {
 			delete uartCreator;
 		}
 		
-		//DI ja esta conectado em TX da UART
-		
-		//Se char der overflow??		
-		void writeWord(char i){	
-			sendingState();
+		char writeChar(char i){				
+			if(i<0 || i > 127){
+				return -1;
+			}
+			
+			sendingState();		
 			uart->put(i);
+			return i;
 		}		
 		
-		//RO ja esta conectado no RX da UART
-		char readWord(){	
+		char readChar(){	
 			receivingState();		
 			char i = uart->get();
+			if(i<0 || i > 127)
+				return -1;
+				
 			return i;
 		}
 		

@@ -7,37 +7,65 @@
 #include "rs485.h"
 
 
-	TEST(SerialRS485Test, testWriteWord){	
+	TEST(SerialRS485Test, testWriteChar){	
 		
-		const int nWrites=100;
+		
+		const int nWrites=6; //apenas 6 validas
 		const int nReads=0;	
 		SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
-
-		for(int i=0;i<nWrites;i++)
-			r.writeWord(i);    	
+		
+		int i = 0;
+		//Leituras invalidas
+		EXPECT_EQ(-1,  r.writeChar(-3));
+		EXPECT_EQ(-1,  r.writeChar(-2));
+		EXPECT_EQ(-1,  r.writeChar(-1));	
+		//Leituras validas
+		EXPECT_EQ(0,   r.writeChar(0));
+		EXPECT_EQ(1,   r.writeChar(1));
+		EXPECT_EQ(2,   r.writeChar(2));		
+		EXPECT_EQ(3,   r.writeChar(3));
+		
+		EXPECT_EQ(126, r.writeChar(126));
+		EXPECT_EQ(127, r.writeChar(127));	
+		//Leituras invalidas
+		EXPECT_EQ(-1,  r.writeChar(128));
+		EXPECT_EQ(-1,  r.writeChar(129));
+		EXPECT_EQ(-1,  r.writeChar(130));	  	
 	}
 
 /*
  * Testa a leitura de uma sequencia de caracteres
  * bem definido. Verificando o valor recebido a cada
- * chamada do metodo readWord()
+ * chamada do metodo readChar()
  */
 
-TEST(SerialRS485Test, testReadWord){		
+TEST(SerialRS485Test, testReadChar){		
 	const int nWrites=0;
-	const int nReads=100;	
+	const int nReads=12;
 	SerialRS485 < MockGPIOCreator<nWrites, nReads>, MockUARTCreator<nWrites, nReads> > r(9600, 8, UART_Common::NONE, 1);	
-
-	char leitura;
-    for(char i=0;i<nReads;i++){
-		leitura = r.readWord();
-		EXPECT_EQ(i, leitura);
-	}
+	
+	//Leituras invalidas
+	EXPECT_EQ(-1,  r.readChar());
+	EXPECT_EQ(-1,  r.readChar());
+	EXPECT_EQ(-1,  r.readChar());	
+	//Leituras validas
+	EXPECT_EQ(0,   r.readChar());
+	EXPECT_EQ(1,   r.readChar());
+	EXPECT_EQ(2,   r.readChar());
+	
+	EXPECT_EQ(3,   r.readChar());
+	EXPECT_EQ(126, r.readChar());
+	EXPECT_EQ(127, r.readChar());	
+	//Leituras invalidas
+	EXPECT_EQ(-1,  r.readChar());
+	EXPECT_EQ(-1,  r.readChar());
+	EXPECT_EQ(-1,  r.readChar());	
+	
 	cout<<endl;
 	
 	/* 
 	 * Esta implementacao se faz possivel pois a classe MockUARTCreator
-	 * retorna valores de 0 a nReads (passado como argumetno template) sequenciamente.
+	 * retorna um array com chars cobrindo as classes de equivalencia e analises de limite.
 	 */ 
 	
 }
@@ -55,6 +83,7 @@ TEST(SerialRS485Test, testFailExample){
 */
 
 int main( int argc, char *argv[] ) {
+	
     ::testing::InitGoogleMock( &argc, argv );
     return RUN_ALL_TESTS( );
 }

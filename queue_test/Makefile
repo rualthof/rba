@@ -1,5 +1,5 @@
-GTEST_DIR = /home/rudimar/Desktop/testabilidade/rba/googletest
-GMOCK_DIR = /home/rudimar/Desktop/testabilidade/rba/googlemock
+GTEST_DIR = /home/perfil/Desktop/rba/googletest
+GMOCK_DIR = /home/perfil/Desktop/rba/googlemock
 
 G_SOURCES = $(GTEST_DIR)/src/gtest-all.cc $(GMOCK_DIR)/src/gmock-all.cc
 

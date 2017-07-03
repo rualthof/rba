@@ -109,8 +109,8 @@ class Ordered_Queue_Test : public ::testing::Test
  * Neste teste, faz-se a insersao de valores com rank aleatorios
  * e espera-se que cada numero seja maior ou igual o anterior.
  */ 
-TEST_F(Ordered_Queue_Test, RetornoOrdenado) {	
-	if(DEBUG) cout<<"\n\n------ TESTE DE ORDENACAO --------"<<endl;
+TEST_F(Ordered_Queue_Test, InsertRemove) {	
+	if(DEBUG) cout<<"\n\n------ TESTE DE ORDENACAO: testa os metodos insert e remove--------"<<endl;
 					
 	//Inserindo valores
 	FillVectorRandomRank();
@@ -138,6 +138,24 @@ TEST_F(Ordered_Queue_Test, RetornoOrdenado) {
 		last_head=head;
 		last_head_rank=head_rank;
 	}	
+
+
+	if(DEBUG) cout<<"\n\n------ TESTE DE INSERSAO DE ELEMENTO NULO --------"<<endl;
+	q1.insert(NULL);	
+	
+	EXPECT_EQ(0, q1.size());
+	EXPECT_EQ(1, q1.empty());
+	EXPECT_FALSE(q1.tail());
+	EXPECT_FALSE(q1.head());
+	
+	Inteiro i1(1,7);
+	q1.insert(&i1.e);
+	
+	q1.insert(NULL);	
+	
+	EXPECT_EQ(1, q1.size());
+	EXPECT_EQ(q1.head(), q1.tail());
+		
 }
 
 /*
@@ -239,28 +257,6 @@ TEST_F(Ordered_Queue_Test, EncontraElemento) {
 	}
 }
 
-/*
- * Neste teste faz-se o teste do metodo tail, removendo-se sempre o ultimo
- * elemento e verificando se o  de tail eh o mesmo que o esperado
- */ 
-TEST_F(Ordered_Queue_Test, TailTest) {
-	
-	if(DEBUG) cout<<"\n\n------ TESTE DO METODO TAIL --------"<<endl;
-		
-	//Inserindo valroes de rank conhecido	
-	FillVectorOrderedRank();
-	
-	//Testando o metodo search
-	for(int i=nvals-1;i>0;i--){
-		EXPECT_EQ(ivec[i], q1.tail()->object());
-		q1.remove(ivec[i]);
-	}
-	
-	EXPECT_EQ(q1.head(), q1.tail());
-	q1.remove(ivec[0]);
-	
-	EXPECT_FALSE(q1.tail());
-}
 
 /*
  * Neste teste faz-se o teste do metodo head, removendo-se sempre o primeiro
@@ -283,6 +279,30 @@ TEST_F(Ordered_Queue_Test, HeadTest) {
 }
 
 /*
+ * Neste teste faz-se o teste do metodo tail, removendo-se sempre o ultimo
+ * elemento e verificando se o  de tail eh o mesmo que o esperado
+ */ 
+TEST_F(Ordered_Queue_Test, TailTest) {
+	
+	if(DEBUG) cout<<"\n\n------ TESTE DO METODO TAIL --------"<<endl;
+		
+	//Inserindo valroes de rank conhecido	
+	FillVectorOrderedRank();
+	
+	//Testando o metodo search
+	for(int i=nvals-1;i>0;i--){
+		EXPECT_EQ(ivec[i], q1.tail()->object());
+		EXPECT_NE(q1.head(), q1.tail()); 
+		q1.remove(ivec[i]);
+	}
+	
+	EXPECT_EQ(q1.head(), q1.tail());
+	q1.remove(ivec[0]);
+	
+	EXPECT_FALSE(q1.tail());
+}
+
+/*
  * Neste teste faz-se o teste do metodo size. Insere-se um numero conhecido de valores
  * e verifica-se o tamanho apos a remocao de cada elemento.
  */ 
@@ -302,23 +322,7 @@ TEST_F(Ordered_Queue_Test, SizeTest) {
 	EXPECT_FALSE(q1.size());
 }
 
-TEST_F(Ordered_Queue_Test, InsersaoElementoNulo) {
-	if(DEBUG) cout<<"\n\n------ TESTE DE INSERSAO DE ELEMENTO NULO --------"<<endl;
-	q1.insert(NULL);	
-	
-	EXPECT_EQ(0, q1.size());
-	EXPECT_EQ(1, q1.empty());
-	EXPECT_FALSE(q1.tail());
-	EXPECT_FALSE(q1.head());
-	
-	Inteiro i1(1,7);
-	q1.insert(&i1.e);
-	
-	q1.insert(NULL);	
-	
-	EXPECT_EQ(1, q1.size());
-	EXPECT_EQ(q1.head(), q1.tail());	
-}
+
 
 
 int main( int argc, char *argv[] ) {
